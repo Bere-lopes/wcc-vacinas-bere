@@ -7,10 +7,28 @@ const createVaccine = async (req, res)  =>  {
             console.log(`Sua vacina ${vaccine.name} foi cadastrada`)
             res.status(201).send(vaccine)
     }catch(error)  {
-        res.status(500).send({message: error.message})
+        messageError(res, error)
     }
 }
 
+const getAllVaccines = async (req, res) =>  {
+    const vaccinated = req.query.vaccinated
+    try  {
+        const where = vaccinated ? {where: { vaccinated }} : {}
+        const vaccines = await Vaccine.findAll(where)
+        if (vaccines && vaccines.length > 0)  {
+            res.status(200).send(vaccines)
+        } else {
+            res.status(204).send()
+        }
+    } catch (error)  {
+        messageError(res, error)
+    }
+}
+const messageError = (res, error) => {
+res.status(500).send({ message: error.message})
+}
 module.exports = {
-    createVaccine
+    createVaccine,
+    getAllVaccines,
 }
